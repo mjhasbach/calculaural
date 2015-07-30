@@ -1,10 +1,11 @@
 import Tone from 'tone';
 import teoria from 'teoria';
+import teoriaScaleChords from 'teoria-scale-chords';
 import uuid from 'node-uuid';
 import math from './math';
 
 let audio = {
-    init: function(context) {
+    init(context) {
         let controls = context.cursors.controls.get();
 
         audio.context = context;
@@ -27,9 +28,15 @@ let audio = {
                     }
                 }
                 else if (path[0] === 'instruments' && audio.instrument.notes.updateOptions.has(path[2])) {
-                    let instrumentOpts = audio.context.tree.select.apply(this, path).up().get();
+                    let instrumentCursor = audio.context.tree.select.apply(this, path).up(),
+                        instrumentOpts = instrumentCursor.get();
 
                     audio.instrument.notes.generate(instrumentOpts);
+
+                    if (path[2] === 'chordLength') {
+                        instrumentOpts.tone.dispose();
+                        instrumentCursor.set('tone', new Tone.PolySynth(+instrumentOpts.chordLength).toMaster());
+                    }
                 }
             }
         });
@@ -37,16 +44,15 @@ let audio = {
     instrument: {
         score: {},
         defaults: {
-            instrumentType: 'MonoSynth',
             numberType: 'pi',
-            numberQuantity: 30,
             duration: 1,
             notesPerMeasure: 1,
             tonic: 'none',
             scale: 'major',
-            scaleDisabled: 'disabled',
             scaleType: 'skip',
             scaleDirection: 'up',
+            chordLength: 'none',
+            numberQuantity: 30,
             transpose: 50
         },
         releaseAll() {
@@ -65,17 +71,17 @@ let audio = {
         },
         add() {
             let instrumentOpts = Object.assign(
-                    {
-                        id: uuid.v1(),
-                        tone: new Tone[audio.instrument.defaults.instrumentType]().toMaster(),
-                        routeFn: function routeFn(time, note) {
-                            let instrument = audio.instrument.getByID(instrumentOpts.id);
+                {
+                    id: uuid.v1(),
+                    tone: new Tone.PolySynth(1).toMaster(),
+                    routeFn(time, note) {
+                        let instrument = audio.instrument.getByID(instrumentOpts.id);
 
-                            instrument.tone.triggerAttackRelease(note, instrument.duration + 'n', time);
-                        }
-                    },
-                    audio.instrument.defaults
-                );
+                        instrument.tone.triggerAttackRelease(note, instrument.duration + 'n', time);
+                    }
+                },
+                audio.instrument.defaults
+            );
 
             Tone.Note.route(instrumentOpts.id, instrumentOpts.routeFn);
 
@@ -93,12 +99,13 @@ let audio = {
         notes: {
             updateOptions: new Set([
                 'numberType',
-                'numberQuantity',
                 'notesPerMeasure',
                 'tonic',
                 'scale',
                 'scaleType',
                 'scaleDirection',
+                'chordLength',
+                'numberQuantity',
                 'transpose'
             ]),
             generate(instrumentOpts) {
@@ -107,14 +114,15 @@ let audio = {
                     quarter = 0,
                     sixteenth = 0,
                     notesPerMeasure = +instrumentOpts.notesPerMeasure,
-                    numberQuantity = +instrumentOpts.numberQuantity,
-                    digits = math.getDigits[instrumentOpts.numberType](numberQuantity),
-                    tonic = instrumentOpts.tonic,
+                    digits = math.getDigits[instrumentOpts.numberType](+instrumentOpts.numberQuantity),
                     transpose = +instrumentOpts.transpose,
-                    scale = tonic === 'none' ? null : teoria.scale(instrumentOpts.tonic, instrumentOpts.scale);
+                    chordLength = +instrumentOpts.chordLength,
+                    scale = instrumentOpts.tonic === 'none' ? null :
+                        teoria.scale(instrumentOpts.tonic, instrumentOpts.scale);
 
                 for (let digit of digits) {
-                    let note = teoria.note.fromMIDI(+digit + transpose);
+                    let transportTime = bar + ':' + quarter + ':' + sixteenth,
+                        note = teoria.note.fromMIDI(+digit + transpose);
 
                     if (scale && note.scaleDegree(scale) === 0) {
                         if (instrumentOpts.scaleType === 'skip') {
@@ -127,7 +135,18 @@ let audio = {
                         }
                     }
 
-                    notes.push([bar + ':' + quarter + ':' + sixteenth, note.scientific()]);
+                    if (chordLength > 1 && scale) {
+                        teoriaScaleChords(scale, note, chordLength, function(err, chordNotes){
+                            if (err) { throw err; }
+
+                            chordNotes.forEach(function(note) {
+                                notes.push([transportTime, teoria.note(note).fq()]);
+                            });
+                        })
+                    }
+                    else {
+                        notes.push([transportTime, note.fq()]);
+                    }
 
                     if (notesPerMeasure === 1) {
                         bar++;

@@ -1,6 +1,5 @@
 import React from 'react';
 import RemoveInstrument from './removeInstrument';
-import InstrumentType from './instrumentType';
 import NumberType from './numberType';
 import Duration from './duration';
 import NotesPerMeasure from './notesPerMeasure';
@@ -8,6 +7,7 @@ import Tonic from './tonic';
 import Scale from './scale';
 import ScaleType from './scaleType';
 import ScaleDirection from './scaleDirection';
+import ChordLength from './chordLength';
 import NumberQuantity from './numberQuantity';
 import TransposeInstrument from './transposeInstrument';
 
@@ -23,7 +23,6 @@ export default class extends React.Component {
 
                 return <div className='instrument' key={i}>
                     <RemoveInstrument onClick={function() { props.audio.instrument.remove(i); }}/>
-                    <InstrumentType cursor={instrumentCursor.select('instrumentType')}/>
                     <NumberType cursor={instrumentCursor.select('numberType')}/>
                     <Duration cursor={instrumentCursor.select('duration')}/>
                     <NotesPerMeasure cursor={instrumentCursor.select('notesPerMeasure')}/>
@@ -31,6 +30,7 @@ export default class extends React.Component {
                     <Scale cursor={instrumentCursor.select('scale')} disabled={tonic === 'none'}/>
                     <ScaleType cursor={instrumentCursor.select('scaleType')} disabled={tonic === 'none'}/>
                     <ScaleDirection cursor={instrumentCursor.select('scaleDirection')} disabled={tonic === 'none' || instrumentCursor.select('scaleType').get() === 'skip'}/>
+                    <ChordLength cursor={instrumentCursor.select('chordLength')} disabled={tonic === 'none'}/>
                     <NumberQuantity cursor={instrumentCursor.select('numberQuantity')}/>
                     <TransposeInstrument cursor={instrumentCursor.select('transpose')}/>
                 </div>
