@@ -1,0 +1,34 @@
+import React from 'react';
+import {branch} from 'baobab-react/higher-order';
+import PropTypes from 'baobab-react/prop-types';
+import Controls from './controls';
+import Instruments from './instruments';
+import audio from './audio';
+
+class App extends React.Component {
+    static get contextTypes() {
+        return {
+            tree: PropTypes.baobab,
+            cursors: PropTypes.cursors
+        }
+    }
+
+    componentWillMount() {
+        audio.init(this.context, this.props);
+    }
+
+    render() {
+        return <div className='ui'>
+            <Controls ui={this} audio={audio}/>
+            <Instruments ui={this} audio={audio}/>
+        </div>;
+    }
+}
+
+export default branch(App, {
+    cursors: {
+        state: ['state'],
+        controls: ['controls'],
+        instruments: ['instruments']
+    }
+});
