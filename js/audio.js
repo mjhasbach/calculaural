@@ -33,9 +33,13 @@ let audio = {
 
                     audio.instrument.notes.generate(instrumentOpts);
 
-                    if (path[2] === 'chordLength') {
-                        instrumentOpts.tone.dispose();
-                        instrumentCursor.set('tone', new Tone.PolySynth(+instrumentOpts.chordLength).toMaster());
+                    if (new Set(['chordLength', 'arpeggiateChord']).has(path[2])) {
+                        let voices = instrumentOpts.arpeggiateChord === 'yes' ? 1 : +instrumentOpts.chordLength;
+
+                        if (voices !== instrumentOpts.tone.voices.length) {
+                            instrumentOpts.tone.dispose();
+                            instrumentCursor.set('tone', new Tone.PolySynth(voices).toMaster());
+                        }
                     }
                 }
             }
@@ -51,7 +55,10 @@ let audio = {
             scale: 'major',
             scaleType: 'skip',
             scaleDirection: 'up',
-            chordLength: 'none',
+            chordLength: 1,
+            arpeggiateChord: 'no',
+            arpeggioDirection: 'up',
+            arpeggioPeakValley: 'once',
             numberQuantity: 30,
             transpose: 50
         },
@@ -105,6 +112,9 @@ let audio = {
                 'scaleType',
                 'scaleDirection',
                 'chordLength',
+                'arpeggiateChord',
+                'arpeggioDirection',
+                'arpeggioPeakValley',
                 'numberQuantity',
                 'transpose'
             ]),
@@ -113,16 +123,50 @@ let audio = {
                     bar = 0,
                     quarter = 0,
                     sixteenth = 0,
-                    notesPerMeasure = +instrumentOpts.notesPerMeasure,
+                    npm = +instrumentOpts.notesPerMeasure,
                     digits = math.getDigits[instrumentOpts.numberType](+instrumentOpts.numberQuantity),
                     transpose = +instrumentOpts.transpose,
                     chordLength = +instrumentOpts.chordLength,
                     scale = instrumentOpts.tonic === 'none' ? null :
-                        teoria.scale(instrumentOpts.tonic, instrumentOpts.scale);
+                        teoria.scale(instrumentOpts.tonic, instrumentOpts.scale),
+                    getTime = function() {
+                        return bar + ':' + quarter + ':' + sixteenth;
+                    },
+                    advanceTime = function() {
+                        if (npm === 1) {
+                            bar++;
+                        }
+                        if ((npm === 2 && quarter === 2) || (npm === 4 && quarter === 3)) {
+                            quarter = 0;
+                            bar++;
+                        }
+                        else if ((npm === 8 && sixteenth === 2) || (npm === 16 && sixteenth === 3)) {
+                            if (quarter === 3) {
+                                quarter = 0;
+                                bar++;
+                            }
+                            else {
+                                quarter++;
+                            }
+
+                            sixteenth = 0;
+                        }
+                        else if (npm === 2) {
+                            quarter += 2;
+                        }
+                        else if (npm === 4) {
+                            quarter++;
+                        }
+                        else if (npm === 8) {
+                            sixteenth += 2;
+                        }
+                        else {
+                            sixteenth++;
+                        }
+                    };
 
                 for (let digit of digits) {
-                    let transportTime = bar + ':' + quarter + ':' + sixteenth,
-                        note = teoria.note.fromMIDI(+digit + transpose);
+                    let note = teoria.note.fromMIDI(+digit + transpose);
 
                     if (scale && note.scaleDegree(scale) === 0) {
                         if (instrumentOpts.scaleType === 'skip') {
@@ -136,48 +180,43 @@ let audio = {
                     }
 
                     if (chordLength > 1 && scale) {
-                        teoriaScaleChords(scale, note, chordLength, function(err, chordNotes){
+                        teoriaScaleChords(scale, note, chordLength, function(err, chordNotes) {
                             if (err) { throw err; }
 
-                            chordNotes.forEach(function(note) {
-                                notes.push([transportTime, teoria.note(note).fq()]);
+                            if (instrumentOpts.arpeggiateChord === 'yes' && instrumentOpts.arpeggioDirection !== 'up') {
+                                let reverseNotes = chordNotes.slice(0).reverse();
+
+                                if (instrumentOpts.arpeggioDirection === 'down') {
+                                    chordNotes = reverseNotes;
+                                }
+                                else if (instrumentOpts.arpeggioDirection === 'downUp') {
+                                    let upNotes = instrumentOpts.arpeggioPeakValley === 'once'
+                                        ? chordNotes.slice(1) : chordNotes;
+
+                                    chordNotes = reverseNotes.concat(upNotes);
+                                }
+                                else if (instrumentOpts.arpeggioDirection === 'upDown') {
+                                    let downNotes = instrumentOpts.arpeggioPeakValley === 'once'
+                                        ? reverseNotes.slice(1) : reverseNotes;
+
+                                    chordNotes = chordNotes.concat(downNotes);
+                                }
+                            }
+
+                            chordNotes.forEach(function(note, i) {
+                                notes.push([getTime(), teoria.note(note).fq()]);
+
+                                if (instrumentOpts.arpeggiateChord === 'yes' && i < chordNotes.length - 1) {
+                                    advanceTime();
+                                }
                             });
                         })
                     }
                     else {
-                        notes.push([transportTime, note.fq()]);
+                        notes.push([getTime(), note.fq()]);
                     }
 
-                    if (notesPerMeasure === 1) {
-                        bar++;
-                    }
-                    if ((notesPerMeasure === 2 && quarter === 2) || (notesPerMeasure === 4 && quarter === 3)) {
-                        quarter = 0;
-                        bar++;
-                    }
-                    else if ((notesPerMeasure === 8 && sixteenth === 2) || (notesPerMeasure === 16 && sixteenth === 3)) {
-                        if (quarter === 3) {
-                            quarter = 0;
-                            bar++;
-                        }
-                        else {
-                            quarter++;
-                        }
-
-                        sixteenth = 0;
-                    }
-                    else if (notesPerMeasure === 2) {
-                        quarter += 2;
-                    }
-                    else if (notesPerMeasure === 4) {
-                        quarter++;
-                    }
-                    else if (notesPerMeasure === 8) {
-                        sixteenth += 2;
-                    }
-                    else {
-                        sixteenth++;
-                    }
+                    advanceTime();
                 }
 
                 audio.instrument.score[instrumentOpts.id] = notes;
