@@ -26,8 +26,9 @@ export default class extends React.Component {
                     chordLengthCursor = instrumentCursor.select('chordLength'),
                     arpeggiateChordCursor = instrumentCursor.select('arpeggiateChord'),
                     arpeggioDirectionCursor = instrumentCursor.select('arpeggioDirection'),
-                    arpeggiateChord = arpeggiateChordCursor.get(),
-                    noTonic = tonicCursor.get() === 'none';
+                    chordIsMonad = chordLengthCursor.get() < 2,
+                    noTonic = tonicCursor.get() === 'none',
+                    noChordArpeggiation = arpeggiateChordCursor.get() === 'no' || chordIsMonad;
 
                 return <div className='instrument' key={i}>
                     <Remove onClick={function() { props.audio.instrument.remove(i); }}/>
@@ -39,9 +40,9 @@ export default class extends React.Component {
                     <ScaleType cursor={instrumentCursor.select('scaleType')} disabled={noTonic}/>
                     <ScaleDirection cursor={instrumentCursor.select('scaleDirection')} disabled={noTonic || instrumentCursor.select('scaleType').get() === 'skip'}/>
                     <ChordLength cursor={chordLengthCursor} disabled={noTonic}/>
-                    <ArpeggiateChord cursor={arpeggiateChordCursor} disabled={noTonic || +chordLengthCursor.get() < 2}/>
-                    <ArpeggioDirection cursor={arpeggioDirectionCursor} disabled={noTonic || arpeggiateChord === 'no'}/>
-                    <ArpeggioPeakValley cursor={instrumentCursor.select('arpeggioPeakValley')} disabled={noTonic || arpeggiateChord === 'no' || new Set(['up', 'down']).has(arpeggioDirectionCursor.get())}/>
+                    <ArpeggiateChord cursor={arpeggiateChordCursor} disabled={noTonic || chordIsMonad}/>
+                    <ArpeggioDirection cursor={arpeggioDirectionCursor} disabled={noTonic || noChordArpeggiation}/>
+                    <ArpeggioPeakValley cursor={instrumentCursor.select('arpeggioPeakValley')} disabled={noTonic || noChordArpeggiation || new Set(['up', 'down']).has(arpeggioDirectionCursor.get())}/>
                     <Volume cursor={instrumentCursor.select('volume')}/>
                     <NumberQuantity cursor={instrumentCursor.select('numberQuantity')}/>
                     <Transpose cursor={instrumentCursor.select('transpose')}/>
