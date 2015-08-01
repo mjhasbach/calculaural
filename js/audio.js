@@ -27,18 +27,25 @@ let audio = {
                         Tone.Transport.bpm.value = controls.bpm;
                     }
                 }
-                else if (path[0] === 'instruments' && audio.instrument.notes.updateOptions.has(path[2])) {
+                else if (path[0] === 'instruments' &&
+                    (path[2] === 'volume' || audio.instrument.notes.updateOptions.has(path[2]))) {
+
                     let instrumentCursor = audio.context.tree.select.apply(this, path).up(),
                         instrumentOpts = instrumentCursor.get();
 
-                    audio.instrument.notes.generate(instrumentOpts);
+                    if (path[2] === 'volume'){
+                        audio.instrument.changeSetting(instrumentOpts.tone, path[2], instrumentOpts[path[2]]);
+                    }
+                    else {
+                        audio.instrument.notes.generate(instrumentOpts);
 
-                    if (new Set(['chordLength', 'arpeggiateChord']).has(path[2])) {
-                        let voices = instrumentOpts.arpeggiateChord === 'yes' ? 1 : +instrumentOpts.chordLength;
+                        if (new Set(['chordLength', 'arpeggiateChord']).has(path[2])) {
+                            let voices = instrumentOpts.arpeggiateChord === 'yes' ? 1 : +instrumentOpts.chordLength;
 
-                        if (voices !== instrumentOpts.tone.voices.length) {
-                            instrumentOpts.tone.dispose();
-                            instrumentCursor.set('tone', new Tone.PolySynth(voices).toMaster());
+                            if (voices !== instrumentOpts.tone.voices.length) {
+                                instrumentOpts.tone.dispose();
+                                instrumentCursor.set('tone', new Tone.PolySynth(voices).toMaster());
+                            }
                         }
                     }
                 }
@@ -59,8 +66,12 @@ let audio = {
             arpeggiateChord: 'no',
             arpeggioDirection: 'up',
             arpeggioPeakValley: 'once',
+            volume: 0,
             numberQuantity: 30,
             transpose: 50
+        },
+        changeSetting(tone, setting, value) {
+            tone.set({[setting]: value});
         },
         releaseAll() {
             audio.context.cursors.instruments.get().forEach(function(instrument) {

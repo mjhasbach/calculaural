@@ -12,6 +12,7 @@ import ArpeggiateChord from './arpeggiateChord';
 import ArpeggioDirection from './arpeggioDirection';
 import ArpeggioPeakValley from './arpeggioPeakValley';
 import NumberQuantity from './numberQuantity';
+import Volume from './volumeInstrument.jsx';
 import TransposeInstrument from './transposeInstrument';
 
 export default class extends React.Component {
@@ -41,6 +42,7 @@ export default class extends React.Component {
                     <ArpeggiateChord cursor={arpeggiateChordCursor} disabled={noTonic || +chordLengthCursor.get() < 2}/>
                     <ArpeggioDirection cursor={arpeggioDirectionCursor} disabled={noTonic || arpeggiateChord === 'no'}/>
                     <ArpeggioPeakValley cursor={instrumentCursor.select('arpeggioPeakValley')} disabled={noTonic || arpeggiateChord === 'no' || new Set(['up', 'down']).has(arpeggioDirectionCursor.get())}/>
+                    <Volume cursor={instrumentCursor.select('volume')}/>
                     <NumberQuantity cursor={instrumentCursor.select('numberQuantity')}/>
                     <TransposeInstrument cursor={instrumentCursor.select('transpose')}/>
                 </div>
