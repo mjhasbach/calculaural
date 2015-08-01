@@ -29,6 +29,7 @@
     "babel-runtime": "~5.8.3",
     "baobab": "~1.1.2",
     "baobab-react": "~0.1.1",
+    "debounce": "~1.0.0",
     "node-libs-browser": "~0.5.2",
     "node-uuid": "~1.4.3",
     "pi": "~1.0.0",

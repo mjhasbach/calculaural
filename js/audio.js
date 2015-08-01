@@ -2,6 +2,7 @@ import Tone from 'tone';
 import teoria from 'teoria';
 import teoriaScaleChords from 'teoria-scale-chords';
 import uuid from 'node-uuid';
+import debounce from 'debounce';
 import math from './math';
 
 let audio = {
@@ -129,7 +130,7 @@ let audio = {
                 'numberQuantity',
                 'transpose'
             ]),
-            generate(instrumentOpts) {
+            generate: debounce(function(instrumentOpts) {
                 let notes = [],
                     bar = 0,
                     quarter = 0,
@@ -231,7 +232,7 @@ let audio = {
                 }
 
                 audio.instrument.score[instrumentOpts.id] = notes;
-            }
+            }, 200)
         }
     },
     playback: {
