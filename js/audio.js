@@ -111,9 +111,9 @@ let audio = {
             let instrument = audio.context.cursors.instruments.get(i);
 
             instrument.tone.dispose();
-            Tone.Note.unroute(instrument.id, instrument.routeFn);
             audio.context.cursors.instruments.splice([i, 1]);
             delete audio.instrument.score[instrument.id];
+            audio.instrument.notes.makeTimeline(true);
         },
         notes: {
             updateOptions: new Set([
@@ -130,6 +130,12 @@ let audio = {
                 'numberQuantity',
                 'transpose'
             ]),
+            makeTimeline(onlyIfPlaying) {
+                if (!onlyIfPlaying || (onlyIfPlaying && Tone.Transport.state === 'started')){
+                    Tone.Transport.clearTimelines();
+                    Tone.Note.parseScore(audio.instrument.score);
+                }
+            },
             generate: debounce(function(instrumentOpts) {
                 let notes = [],
                     bar = 0,
@@ -232,6 +238,7 @@ let audio = {
                 }
 
                 audio.instrument.score[instrumentOpts.id] = notes;
+                audio.instrument.notes.makeTimeline(true);
             }, 200)
         }
     },
@@ -244,9 +251,8 @@ let audio = {
         },
         play() {
             audio.context.cursors.state.set(['playing'], true);
+            audio.instrument.notes.makeTimeline();
 
-            Tone.Transport.clearTimelines();
-            Tone.Note.parseScore(audio.instrument.score);
             Tone.Transport.start();
         }
     }
