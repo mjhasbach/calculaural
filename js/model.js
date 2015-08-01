@@ -7,6 +7,7 @@ export default new Baobab({
     },
     controls: {
         bpm: 120,
-        volume: 0
+        volume: 0,
+        transpose: 25
     }
 });

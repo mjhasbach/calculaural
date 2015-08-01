@@ -1,6 +1,7 @@
 import React from 'react';
 import BPM from './bpm';
 import Volume from './volumeGlobal';
+import Transpose from './transposeGlobal'
 import AddInstrument from './addInstrument';
 import Play from './play';
 import Pause from './pause';
@@ -16,6 +17,7 @@ export default class extends React.Component {
         return <div className='controls'>
             <BPM cursor={cursors.controls.select('bpm')}/>
             <Volume cursor={cursors.controls.select('volume')}/>
+            <Transpose cursor={cursors.controls.select('transpose')}/>
             <AddInstrument onClick={audio.instrument.add}/>
             {
                 cursors.state.get(['playing']) ?

@@ -16,7 +16,7 @@ let audio = {
         Tone.Transport.bpm.value = controls.bpm;
     },
     bindChangeSetting() {
-        audio.context.tree.on('update', function(e) {
+        let update = debounce(function(e) {
             for (let path of e.data.log) {
                 if (path[0] === 'controls') {
                     let controls = audio.context.cursors.controls.get();
@@ -27,31 +27,30 @@ let audio = {
                     else if (path[1] === 'bpm') {
                         Tone.Transport.bpm.value = controls.bpm;
                     }
+                    else if (path[1] === 'transpose') {
+                        for (let i = 0; i < audio.context.cursors.instruments.get().length; i++){
+                            audio.instrument.notes.generate(audio.context.cursors.instruments.select(i));
+                        }
+                    }
                 }
                 else if (path[0] === 'instruments' &&
                     (path[2] === 'volume' || audio.instrument.notes.updateOptions.has(path[2]))) {
 
-                    let instrumentCursor = audio.context.tree.select.apply(this, path).up(),
-                        instrumentOpts = instrumentCursor.get();
+                    let instrumentCursor = audio.context.tree.select.apply(this, path).up();
 
-                    if (path[2] === 'volume'){
+                    if (path[2] === 'volume') {
+                        let instrumentOpts = instrumentCursor.get();
+
                         audio.instrument.changeSetting(instrumentOpts.tone, path[2], instrumentOpts[path[2]]);
                     }
                     else {
-                        audio.instrument.notes.generate(instrumentOpts);
-
-                        if (new Set(['chordLength', 'arpeggiateChord']).has(path[2])) {
-                            let voices = instrumentOpts.arpeggiateChord === 'yes' ? 1 : +instrumentOpts.chordLength;
-
-                            if (voices !== instrumentOpts.tone.voices.length) {
-                                instrumentOpts.tone.dispose();
-                                instrumentCursor.set('tone', new Tone.PolySynth(voices).toMaster());
-                            }
-                        }
+                        audio.instrument.notes.generate(instrumentCursor);
                     }
                 }
             }
-        });
+        }, 200);
+
+        audio.context.tree.on('update', update);
     },
     instrument: {
         score: {},
@@ -69,7 +68,7 @@ let audio = {
             arpeggioPeakValley: 'once',
             volume: 0,
             numberQuantity: 30,
-            transpose: 50
+            transpose: 25
         },
         changeSetting(tone, setting, value) {
             tone.set({[setting]: value});
@@ -103,14 +102,17 @@ let audio = {
             );
 
             Tone.Note.route(instrumentOpts.id, instrumentOpts.routeFn);
-
-            audio.instrument.notes.generate(instrumentOpts);
             audio.context.cursors.instruments.push(instrumentOpts);
+            audio.context.tree.commit();
+            audio.instrument.notes.generate(
+                audio.context.cursors.instruments.select(audio.context.cursors.instruments.get().length - 1)
+            );
         },
         remove(i) {
             let instrument = audio.context.cursors.instruments.get(i);
 
             instrument.tone.dispose();
+            Tone.Note.unroute(instrument.id, instrument.routeFn);
             audio.context.cursors.instruments.splice([i, 1]);
             delete audio.instrument.score[instrument.id];
             audio.instrument.notes.makeTimeline(true);
@@ -131,22 +133,27 @@ let audio = {
                 'transpose'
             ]),
             makeTimeline(onlyIfPlaying) {
-                if (!onlyIfPlaying || (onlyIfPlaying && Tone.Transport.state === 'started')){
+                if (!onlyIfPlaying || (onlyIfPlaying && Tone.Transport.state === 'started')) {
                     Tone.Transport.clearTimelines();
                     Tone.Note.parseScore(audio.instrument.score);
                 }
             },
-            generate: debounce(function(instrumentOpts) {
+            generate: function(instrumentCursor) {
                 let notes = [],
                     bar = 0,
                     quarter = 0,
                     sixteenth = 0,
+                    instrumentOpts = instrumentCursor.get(),
                     npm = +instrumentOpts.notesPerMeasure,
                     digits = math.getDigits[instrumentOpts.numberType](+instrumentOpts.numberQuantity),
-                    transpose = +instrumentOpts.transpose,
+                    voices = instrumentOpts.arpeggiateChord === 'yes' ? 1 : +instrumentOpts.chordLength,
                     chordLength = +instrumentOpts.chordLength,
                     scale = instrumentOpts.tonic === 'none' ? null :
                         teoria.scale(instrumentOpts.tonic, instrumentOpts.scale),
+                    transpose = {
+                        instrument: +instrumentOpts.transpose,
+                        global: +audio.context.cursors.controls.get().transpose
+                    },
                     getTime = function() {
                         return bar + ':' + quarter + ':' + sixteenth;
                     },
@@ -184,7 +191,7 @@ let audio = {
                     };
 
                 for (let digit of digits) {
-                    let note = teoria.note.fromMIDI(+digit + transpose);
+                    let note = teoria.note.fromMIDI(+digit + transpose.global + transpose.instrument);
 
                     if (scale && note.scaleDegree(scale) === 0) {
                         if (instrumentOpts.scaleType === 'skip') {
@@ -239,7 +246,12 @@ let audio = {
 
                 audio.instrument.score[instrumentOpts.id] = notes;
                 audio.instrument.notes.makeTimeline(true);
-            }, 200)
+
+                if (voices !== instrumentOpts.tone.voices.length) {
+                    instrumentOpts.tone.dispose();
+                    instrumentCursor.set('tone', new Tone.PolySynth(voices).toMaster());
+                }
+            }
         }
     },
     playback: {
