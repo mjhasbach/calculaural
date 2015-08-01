@@ -1,5 +1,5 @@
 import React from 'react';
-import RemoveInstrument from './removeInstrument';
+import Remove from './removeInstrument';
 import NumberType from './numberType';
 import Duration from './duration';
 import NotesPerMeasure from './notesPerMeasure';
@@ -13,7 +13,7 @@ import ArpeggioDirection from './arpeggioDirection';
 import ArpeggioPeakValley from './arpeggioPeakValley';
 import NumberQuantity from './numberQuantity';
 import Volume from './volumeInstrument.jsx';
-import TransposeInstrument from './transposeInstrument';
+import Transpose from './transposeInstrument';
 
 export default class extends React.Component {
     render() {
@@ -30,7 +30,7 @@ export default class extends React.Component {
                     noTonic = tonicCursor.get() === 'none';
 
                 return <div className='instrument' key={i}>
-                    <RemoveInstrument onClick={function() { props.audio.instrument.remove(i); }}/>
+                    <Remove onClick={function() { props.audio.instrument.remove(i); }}/>
                     <NumberType cursor={instrumentCursor.select('numberType')}/>
                     <Duration cursor={instrumentCursor.select('duration')}/>
                     <NotesPerMeasure cursor={instrumentCursor.select('notesPerMeasure')}/>
@@ -44,7 +44,7 @@ export default class extends React.Component {
                     <ArpeggioPeakValley cursor={instrumentCursor.select('arpeggioPeakValley')} disabled={noTonic || arpeggiateChord === 'no' || new Set(['up', 'down']).has(arpeggioDirectionCursor.get())}/>
                     <Volume cursor={instrumentCursor.select('volume')}/>
                     <NumberQuantity cursor={instrumentCursor.select('numberQuantity')}/>
-                    <TransposeInstrument cursor={instrumentCursor.select('transpose')}/>
+                    <Transpose cursor={instrumentCursor.select('transpose')}/>
                 </div>
             })
         }</div>
