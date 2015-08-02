@@ -1,5 +1,5 @@
 import React from 'react';
-import common from './common';
+import common from '../../common';
 
 export default class extends React.Component {
     render() {

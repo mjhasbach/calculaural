@@ -1,5 +1,5 @@
 import React from 'react';
-import common from './common';
+import common from '../../common';
 
 export default class extends React.Component {
     render() {
@@ -8,7 +8,7 @@ export default class extends React.Component {
             value={this.props.cursor.get()}
             onChange={common.changeSetting.bind(this)}
             min='1'
-            max='500'
+            max='300'
             step='1'/>;
     }
 }

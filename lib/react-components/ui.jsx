@@ -1,9 +1,9 @@
 import React from 'react';
-import {branch} from 'baobab-react/higher-order';
-import PropTypes from 'baobab-react/prop-types';
-import Controls from './controls';
-import Instruments from './instruments';
-import audio from './audio';
+import {branch} from '../../node_modules/baobab-react/higher-order';
+import PropTypes from '../../node_modules/baobab-react/prop-types';
+import Controls from './controls/controls';
+import Instruments from './instruments/instruments';
+import audio from '../audio';
 
 class App extends React.Component {
     static get contextTypes() {

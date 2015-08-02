@@ -1,5 +1,5 @@
 import React from 'react';
-import Remove from './removeInstrument';
+import Remove from './remove';
 import NumberType from './numberType';
 import Duration from './duration';
 import NotesPerMeasure from './notesPerMeasure';
@@ -12,8 +12,8 @@ import ArpeggiateChord from './arpeggiateChord';
 import ArpeggioDirection from './arpeggioDirection';
 import ArpeggioPeakValley from './arpeggioPeakValley';
 import NumberQuantity from './numberQuantity';
-import Volume from './volumeInstrument.jsx';
-import Transpose from './transposeInstrument';
+import Volume from './volume';
+import Transpose from './transpose';
 
 export default class extends React.Component {
     render() {
