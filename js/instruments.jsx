@@ -7,7 +7,7 @@ import Tonic from './tonic';
 import Scale from './scale';
 import ScaleType from './scaleType';
 import ScaleDirection from './scaleDirection';
-import ChordLength from './chordLength';
+import ChordType from './chordType';
 import ArpeggiateChord from './arpeggiateChord';
 import ArpeggioDirection from './arpeggioDirection';
 import ArpeggioPeakValley from './arpeggioPeakValley';
@@ -23,12 +23,12 @@ export default class extends React.Component {
             props.ui.props.instruments.map(function(opt, i) {
                 let instrumentCursor = props.ui.context.cursors.instruments.select(i),
                     tonicCursor = instrumentCursor.select('tonic'),
-                    chordLengthCursor = instrumentCursor.select('chordLength'),
+                    chordType = instrumentCursor.select('chordType'),
                     arpeggiateChordCursor = instrumentCursor.select('arpeggiateChord'),
                     arpeggioDirectionCursor = instrumentCursor.select('arpeggioDirection'),
-                    chordIsMonad = chordLengthCursor.get() < 2,
                     noTonic = tonicCursor.get() === 'none',
-                    noChordArpeggiation = arpeggiateChordCursor.get() === 'no' || chordIsMonad;
+                    noChord = noTonic || chordType.get() === 'none',
+                    noChordArpeggiation = noChord || arpeggiateChordCursor.get() === 'no';
 
                 return <div className='instrument' key={i}>
                     <Remove onClick={function() { props.audio.instrument.remove(i); }}/>
@@ -39,10 +39,10 @@ export default class extends React.Component {
                     <Scale cursor={instrumentCursor.select('scale')} disabled={noTonic}/>
                     <ScaleType cursor={instrumentCursor.select('scaleType')} disabled={noTonic}/>
                     <ScaleDirection cursor={instrumentCursor.select('scaleDirection')} disabled={noTonic || instrumentCursor.select('scaleType').get() === 'skip'}/>
-                    <ChordLength cursor={chordLengthCursor} disabled={noTonic}/>
-                    <ArpeggiateChord cursor={arpeggiateChordCursor} disabled={noTonic || chordIsMonad}/>
-                    <ArpeggioDirection cursor={arpeggioDirectionCursor} disabled={noTonic || noChordArpeggiation}/>
-                    <ArpeggioPeakValley cursor={instrumentCursor.select('arpeggioPeakValley')} disabled={noTonic || noChordArpeggiation || new Set(['up', 'down']).has(arpeggioDirectionCursor.get())}/>
+                    <ChordType cursor={chordType} disabled={noTonic}/>
+                    <ArpeggiateChord cursor={arpeggiateChordCursor} disabled={noChord}/>
+                    <ArpeggioDirection cursor={arpeggioDirectionCursor} disabled={noChordArpeggiation}/>
+                    <ArpeggioPeakValley cursor={instrumentCursor.select('arpeggioPeakValley')} disabled={noChordArpeggiation || new Set(['up', 'down']).has(arpeggioDirectionCursor.get())}/>
                     <Volume cursor={instrumentCursor.select('volume')}/>
                     <NumberQuantity cursor={instrumentCursor.select('numberQuantity')}/>
                     <Transpose cursor={instrumentCursor.select('transpose')}/>
