@@ -14,6 +14,7 @@ import ArpeggioPeakValley from './arpeggioPeakValley';
 import NumberQuantity from './numberQuantity';
 import Volume from './volume';
 import Transpose from './transpose';
+import PianoRoll from './pianoRoll';
 
 export default class extends React.Component {
     render() {
@@ -46,6 +47,7 @@ export default class extends React.Component {
                     <Volume cursor={instrumentCursor.select('volume')}/>
                     <NumberQuantity cursor={instrumentCursor.select('numberQuantity')}/>
                     <Transpose cursor={instrumentCursor.select('transpose')}/>
+                    <PianoRoll instrumentCursor={instrumentCursor} tree={props.ui.context.tree} audio={props.audio}/>
                 </div>
             })
         }</div>
