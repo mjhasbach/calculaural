@@ -34,7 +34,7 @@
     "node-libs-browser": "~0.5.2",
     "node-uuid": "~1.4.3",
     "pi": "~1.0.0",
-    "pixi-piano-roll": "~0.0.4",
+    "pixi-piano-roll": "~0.0.6",
     "react": "~0.13.3",
     "teoria": "~1.9.0",
     "tone": "~0.4.2",

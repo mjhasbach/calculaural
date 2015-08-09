@@ -3,6 +3,7 @@ import BPM from './bpm';
 import Volume from './volume';
 import Transpose from './transpose'
 import AddInstrument from './addInstrument';
+import Seek from './seek';
 import Play from './play';
 import Pause from './pause';
 import Export from './export';
@@ -19,11 +20,13 @@ export default class extends React.Component {
             <Volume cursor={cursors.controls.select('volume')}/>
             <Transpose cursor={cursors.controls.select('transpose')}/>
             <AddInstrument onClick={audio.instrument.add}/>
+            <Seek direction='backward' icon='<' audio={audio}/>
             {
                 cursors.state.get(['playing']) ?
                     <Pause onClick={audio.playback.pause}/> :
                     <Play onClick={audio.playback.play} disabled={noInstruments}/>
             }
+            <Seek direction='forward' icon='>' audio={audio}/>
             <Export disabled={noInstruments}/>
         </div>
     }
