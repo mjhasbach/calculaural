@@ -1,10 +1,80 @@
 <!DOCTYPE html>
 <html>
 <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8"/>
     <title>Calculaural</title>
+    <link rel="stylesheet" href="css/calculaural.css">
+    <link rel="stylesheet" href="node_modules/angular-material/angular-material.min.css">
+    <link rel="stylesheet" href="node_modules/roboto-fontface/css/roboto-fontface.css">
 </head>
-<body>
-    <div id="wrap"></div>
-    <script type="text/javascript" src="./build/bundle.js"></script>
+<body ng-app="calculaural" ng-controller="mainController" layout="column">
+<md-toolbar class="md-toolbar-tools">
+    <h1 id="title">Calculaural</h1>
+    <div ng-repeat="button in toolbarButtons" ng-if="!button.hidden" ng-attr-flex="{{button.flex}}" layout>
+        <md-button
+            class="md-icon-button"
+            ng-disabled="button.disabled"
+            ng-click="button.onClick($event)"
+            ng-mousedown="button.onMouseDown()"
+            aria-label="{{button.name}}">
+
+            <md-tooltip>{{button.name}}</md-tooltip>
+            <md-icon class="toolbarButton" md-svg-icon="{{button.src}}"</md-icon>
+        </md-button>
+    </div>
+</md-toolbar>
+<md-tabs md-autoselect flex>
+    <md-tab ng-if="instrument.list.length < 1" label="Add Instruments" layout="column" flex layout-fill>
+        <md-tab-content id="noInstrumentsTab" layout="row" layout-align="center center" flex layout-fill>
+            Add an instrument by clicking the
+            <md-icon
+                class="addIcon"
+                md-svg-icon="{{iconDir + 'content/svg/production/ic_add_circle_24px.svg'}}">
+            </md-icon>
+            button above
+        </md-tab-content>
+    </md-tab>
+    <md-tab
+        ng-if="instrument.list.length > 0"
+        ng-repeat="iterInstrument in instrument.list track by iterInstrument.id"
+        label="{{'Instrument ' + ($index + 1)}}"
+        layout="column"
+        flex
+        layout-fill>
+
+        <md-tab-content ng-controller="instrumentController" layout="row" flex layout-fill>
+            <md-sidenav class="sidenav" flex-gt-lg="20" md-is-locked-open="true">
+                <div ng-repeat="setting in instrument.setting.list" layout>
+                    <div flex="40" layout layout-align="start center">
+                        <span class="md-body-1">{{capitalize(setting.name)}}</span>
+                    </div>
+                    <md-slider
+                        ng-if="instrument.setting.getType(setting) === 'slider'"
+                        flex
+                        md-discrete
+                        ng-model="iterInstrument[setting.name]"
+                        step="{{setting.step}}"
+                        min="{{setting.min}}"
+                        max="{{setting.max}}"
+                        aria-label="{{setting.name}}">
+                    </md-slider>
+                    <md-select
+                        ng-if="instrument.setting.getType(setting) === 'select'"
+                        flex
+                        ng-model="iterInstrument[setting.name]"
+                        ng-disabled="setting.isDisabled ? setting.isDisabled(iterInstrument) : false"
+                        aria-label="{{setting.name}}">
+
+                        <md-option ng-repeat="option in setting.options" value="{{option.value || option}}">
+                            {{option.name || option}}
+                        </md-option>
+                    </md-select>
+                </div>
+            </md-sidenav>
+            <piano-roll class="pianoRoll" flex></piano-roll>
+        </md-tab-content>
+    </md-tab>
+</md-tabs>
+<script type="text/javascript" src="./build/bundle.js"></script>
 </body>
 </html>

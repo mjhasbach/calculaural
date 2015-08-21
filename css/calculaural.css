@@ -1,0 +1,36 @@
+#title {
+    font-size: 30px;
+}
+
+.toolbarButton{
+    height: 40px;
+    width: 40px;
+}
+
+#noInstrumentsTab {
+    font-size: 3vw;
+}
+
+#noInstrumentsTab > .addIcon {
+    margin: 0 1vw 0 1vw;
+    height: 3vw;
+    width: 3vw;
+    color: #000;
+}
+
+.sidenav {
+    padding: 20px 15px 20px 15px;
+}
+
+.pianoRoll {
+    overflow: hidden;
+}
+
+#globalSettings {
+    width: 400px;
+}
+
+#globalSettings .close {
+    width: 30px;
+    height: 30px;
+}
