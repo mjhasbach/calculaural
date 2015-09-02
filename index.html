@@ -45,32 +45,7 @@
 
         <md-tab-content ng-controller="instrumentController" layout="row" flex layout-fill>
             <md-sidenav class="sidenav" flex-gt-lg="20" md-is-locked-open="true">
-                <div ng-repeat="setting in instrument.setting.list" layout>
-                    <div flex="40" layout layout-align="start center">
-                        <span class="md-body-1">{{capitalize(setting.name)}}</span>
-                    </div>
-                    <md-slider
-                        ng-if="instrument.setting.getType(setting) === 'slider'"
-                        flex
-                        md-discrete
-                        ng-model="iterInstrument[setting.name]"
-                        step="{{setting.step}}"
-                        min="{{setting.min}}"
-                        max="{{setting.max}}"
-                        aria-label="{{setting.name}}">
-                    </md-slider>
-                    <md-select
-                        ng-if="instrument.setting.getType(setting) === 'select'"
-                        flex
-                        ng-model="iterInstrument[setting.name]"
-                        ng-disabled="setting.isDisabled ? setting.isDisabled(iterInstrument) : false"
-                        aria-label="{{setting.name}}">
-
-                        <md-option ng-repeat="option in setting.options" value="{{option.value || option}}">
-                            {{option.name || option}}
-                        </md-option>
-                    </md-select>
-                </div>
+                <settings params="instrument.setting.list" model="iterInstrument"></settings>
             </md-sidenav>
             <piano-roll class="pianoRoll" flex></piano-roll>
         </md-tab-content>

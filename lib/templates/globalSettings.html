@@ -1,0 +1,22 @@
+<md-dialog aria-label="Global Settings">
+    <form id="globalSettings">
+        <md-toolbar>
+            <div class="md-toolbar-tools">
+                <h2 flex>Global Settings</h2>
+                <md-button class="md-icon-button" ng-click="close()">
+                    <md-icon
+                        class="close"
+                        md-svg-icon="{{iconDir + '/navigation/svg/production/ic_close_48px.svg'}}"
+                        aria-label="Close Dialog">
+                    </md-icon>
+                </md-button>
+            </div>
+        </md-toolbar>
+        <md-dialog-content>
+            <settings params="setting.params" model="setting.values"></settings>
+        </md-dialog-content>
+        <div class="md-actions" layout="row">
+            <md-button ng-click="close()">Close</md-button>
+        </div>
+    </form>
+</md-dialog>
