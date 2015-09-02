@@ -38,6 +38,7 @@
     "node-uuid": "1.4.3",
     "pi": "1.0.0",
     "pixi-piano-roll": "1.2.1",
+    "release-script": "0.2.5",
     "teoria": "1.12.0",
     "to-capital-case": "0.1.1",
     "tone": "0.5.1",
@@ -47,5 +48,8 @@
     "angular-material": "0.10.1",
     "material-design-icons": "2.0.0",
     "roboto-fontface": "0.4.2"
+  },
+  "scripts": {
+    "release": "release"
   }
 }
