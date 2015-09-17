@@ -1,0 +1,12 @@
+<md-button
+    class="md-icon-button"
+    ng-repeat="button in buttons"
+    ng-if="!button.hidden"
+    ng-disabled="button.disabled"
+    ng-click="button.onClick($event)"
+    ng-mousedown="button.onMouseDown()"
+    aria-label="{{button.name}}">
+
+    <md-tooltip>{{button.name}}</md-tooltip>
+    <md-icon class="toolbarButton" md-svg-icon="{{button.src}}"</md-icon>
+</md-button>

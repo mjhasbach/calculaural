@@ -11,18 +11,9 @@
 <body ng-app="calculaural" ng-controller="mainController" layout="column">
 <md-toolbar class="md-toolbar-tools">
     <h1 id="title">Calculaural</h1>
-    <div ng-repeat="button in toolbarButtons" ng-if="!button.hidden" ng-attr-flex="{{button.flex}}" layout>
-        <md-button
-            class="md-icon-button"
-            ng-disabled="button.disabled"
-            ng-click="button.onClick($event)"
-            ng-mousedown="button.onMouseDown()"
-            aria-label="{{button.name}}">
-
-            <md-tooltip>{{button.name}}</md-tooltip>
-            <md-icon class="toolbarButton" md-svg-icon="{{button.src}}"</md-icon>
-        </md-button>
-    </div>
+    <toolbar-buttons buttons="toolbarButtons.left"></toolbar-buttons>
+    <span flex></span>
+    <toolbar-buttons buttons="toolbarButtons.right"></toolbar-buttons>
 </md-toolbar>
 <md-tabs md-autoselect flex>
     <md-tab ng-if="instrument.list.length < 1" label="Add Instruments" layout="column" flex layout-fill>
