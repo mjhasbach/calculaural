@@ -16,6 +16,7 @@
         flex
         ng-if="getSettingType(param) === 'select'"
         ng-model="model[param.name]"
+        ng-disabled="param.isDisabled(model)"
         aria-label="{{param.name}}">
 
         <md-option ng-repeat="option in param.options" value="{{option.value || option}}">
