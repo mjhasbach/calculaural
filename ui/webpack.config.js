@@ -4,9 +4,9 @@ var path = require('path'),
     nodeModulesDir = path.resolve(__dirname, '../', 'node_modules');
 
 module.exports = {
-    entry: './lib/calculaural.js',
+    entry: path.resolve(libDir, 'calculaural.js'),
     output: {
-        path: './build/',
+        path: path.resolve(__dirname, 'build'),
         filename: 'bundle.js'
     },
     node: {
