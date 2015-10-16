@@ -1,7 +1,9 @@
+import toolbarButtonsTemplate from '../templates/toolbarButtons'
+
 export default function() {
     return {
         restrict: 'E',
-        templateUrl: 'lib/templates/toolbarButtons.html',
+        template: toolbarButtonsTemplate,
         scope: {
             buttons: '='
         }

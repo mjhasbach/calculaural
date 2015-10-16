@@ -4,9 +4,9 @@
     <meta http-equiv="content-type" content="text/html; charset=utf-8"/>
     <title>Calculaural</title>
     <link href="favicon.ico" rel="icon" type="image/x-icon"/>
-    <link rel="stylesheet" href="css/calculaural.css">
-    <link rel="stylesheet" href="node_modules/angular-material/angular-material.min.css">
-    <link rel="stylesheet" href="node_modules/roboto-fontface/css/roboto-fontface.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700,400italic">
+    <script type="text/javascript" src="./bundle.js"></script>
 </head>
 <body ng-app="calculaural" ng-controller="mainController" layout="column">
 <md-toolbar class="md-toolbar-tools">
@@ -19,10 +19,7 @@
     <md-tab ng-if="instrument.list.length < 1" label="Add Instruments" layout="column" flex layout-fill>
         <md-tab-content id="noInstrumentsTab" layout="row" layout-align="center center" flex layout-fill>
             Add an instrument by clicking the
-            <md-icon
-                class="addIcon"
-                md-svg-icon="{{iconDir + 'content/svg/production/ic_add_circle_24px.svg'}}">
-            </md-icon>
+            <md-icon class="addIcon material-icons">add_circle</md-icon>
             button above
         </md-tab-content>
     </md-tab>
@@ -42,6 +39,5 @@
         </md-tab-content>
     </md-tab>
 </md-tabs>
-<script type="text/javascript" src="./build/bundle.js"></script>
 </body>
 </html>

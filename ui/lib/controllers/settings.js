@@ -1,10 +1,9 @@
 class SettingsController {
-    constructor($scope, $mdDialog, setting, audio, iconDir) {
+    constructor($scope, $mdDialog, setting, audio) {
         Object.assign(
             $scope,
             {
-                setting: setting,
-                iconDir: iconDir,
+                setting,
                 close: function() {
                     $mdDialog.cancel();
                 }
@@ -29,6 +28,6 @@ class SettingsController {
     }
 }
 
-SettingsController.$inject = ['$scope', '$mdDialog', 'setting', 'audio', 'iconDir'];
+SettingsController.$inject = ['$scope', '$mdDialog', 'setting', 'audio'];
 
 export default SettingsController;

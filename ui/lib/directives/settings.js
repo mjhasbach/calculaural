@@ -1,9 +1,10 @@
 import capitalize from 'to-capital-case';
+import settingsTemplate from '../templates/settings'
 
 export default function() {
     return {
         restrict: 'E',
-        templateUrl: 'lib/templates/settings.html',
+        template: settingsTemplate,
         link: function(scope) {
             scope.capitalize = capitalize;
             scope.getSettingType = function(setting) {

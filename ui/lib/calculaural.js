@@ -6,6 +6,10 @@ import InstrumentController from './controllers/instrument';
 import ToolbarButtons from './directives/toolbarButtons';
 import PianoRollDirective from './directives/pianoRoll';
 import SettingsDirective from './directives/settings';
+import '../../node_modules/angular-material/angular-material.css';
+import '../css/calculaural';
+import '../images/favicon';
+import '../index';
 
 angular
     .module('calculaural', [angularMaterial])

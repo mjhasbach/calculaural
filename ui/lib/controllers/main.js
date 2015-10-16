@@ -1,16 +1,14 @@
 import uuid from 'node-uuid';
 import pixiPianoRoll from 'pixi-piano-roll';
 import audio from '../audio.js';
+import globalSettingsTemplate from '../templates/globalSettings'
 
 class MainController {
     constructor($scope, $mdDialog) {
-        var iconDir = 'node_modules/material-design-icons/';
-
         Object.assign(
             $scope,
             {
                 audio: audio,
-                iconDir: iconDir,
                 state: {
                     playing: false
                 },
@@ -18,7 +16,7 @@ class MainController {
                     left: [
                         {
                             name: 'Seek Backward',
-                            src: iconDir + 'av/svg/production/ic_fast_rewind_24px.svg',
+                            icon: 'fast_rewind',
                             get disabled() {
                                 return $scope.audio.playback.position === '0:0:0';
                             },
@@ -32,7 +30,7 @@ class MainController {
                         },
                         {
                             name: 'Play',
-                            src: iconDir + 'av/svg/production/ic_play_arrow_24px.svg',
+                            icon: 'play_arrow',
                             get disabled() {
                                 return $scope.instrument.list.length < 1;
                             },
@@ -45,7 +43,7 @@ class MainController {
                         },
                         {
                             name: 'Pause',
-                            src: iconDir + 'av/svg/production/ic_pause_24px.svg',
+                            icon: 'pause',
                             get hidden() {
                                 return !$scope.state.playing;
                             },
@@ -55,7 +53,7 @@ class MainController {
                         },
                         {
                             name: 'Seek Forward',
-                            src: iconDir + 'av/svg/production/ic_fast_forward_24px.svg',
+                            icon: 'fast_forward',
                             onMouseDown: function() {
                                 audio.playback.seek('forward');
 
@@ -68,7 +66,7 @@ class MainController {
                     right: [
                         {
                             name: 'Remove Instrument',
-                            src: iconDir + 'content/svg/production/ic_remove_circle_24px.svg',
+                            icon: 'remove_circle',
                             get hidden() {
                                 return $scope.instrument.list.length < 1;
                             },
@@ -80,24 +78,23 @@ class MainController {
                         },
                         {
                             name: 'Add Instrument',
-                            src: iconDir + 'content/svg/production/ic_add_circle_24px.svg',
+                            icon: 'add_circle',
                             onClick: function() {
                                 $scope.instrument.add();
                             }
                         },
                         {
                             name: 'Global Settings',
-                            src: iconDir + 'action/svg/production/ic_settings_24px.svg',
+                            icon: 'settings',
                             onClick: function(e) {
                                 $mdDialog.show({
                                     controller: 'settingsController',
-                                    templateUrl: 'lib/templates/globalSettings.html',
+                                    template: globalSettingsTemplate,
                                     targetEvent: e,
                                     clickOutsideToClose: true,
                                     locals: {
                                         setting: $scope.globalSetting,
-                                        audio: audio,
-                                        iconDir: iconDir
+                                        audio: audio
                                     }
                                 });
                             }
