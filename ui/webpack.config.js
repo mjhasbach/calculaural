@@ -1,5 +1,6 @@
 var path = require('path'),
     webpack = require('webpack'),
+    libDir = path.resolve(__dirname, 'lib'),
     nodeModulesDir = path.resolve(__dirname, '../', 'node_modules');
 
 module.exports = {
@@ -16,7 +17,7 @@ module.exports = {
             {
                 test: /\.js$/,
                 loader: 'babel?optional[]=runtime',
-                exclude: /node_modules/
+                include: libDir
             },
             {
                 test: /\.json$/,
