@@ -49,6 +49,7 @@
     "webpack": "1.12.2"
   },
   "scripts": {
-    "release": "release"
+    "release": "release",
+    "postinstall": "node ./node_modules/webpack/bin/webpack.js --config ./ui/webpack.config.js -p -c --progress"
   }
 }
