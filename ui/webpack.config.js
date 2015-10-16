@@ -26,7 +26,7 @@ module.exports = {
             },
             {
                 test: /\.html$/,
-                loader: 'file?name=[path][name].[ext]',
+                loader: 'file?name=[name].[ext]',
                 include: [path.resolve(__dirname, 'index.html')]
             },
             {
