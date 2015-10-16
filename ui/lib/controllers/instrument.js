@@ -1,7 +1,9 @@
 import debounce from 'debounce';
 
-class InstrumentController {
+export default class {
     constructor($scope) {
+        'ngInject';
+
         $scope.$watch('iterInstrument.volume', function(volume, oldVolume) {
             if (volume !== oldVolume) {
                 $scope.iterInstrument.tone.set({volume: volume});
@@ -9,7 +11,3 @@ class InstrumentController {
         });
     }
 }
-
-InstrumentController.$inject = ['$scope'];
-
-export default InstrumentController;

@@ -3,8 +3,10 @@ import pixiPianoRoll from 'pixi-piano-roll';
 import audio from '../audio.js';
 import globalSettingsTemplate from '../templates/globalSettings'
 
-class MainController {
+export default class {
     constructor($scope, $mdDialog) {
+        'ngInject';
+
         Object.assign(
             $scope,
             {
@@ -313,7 +315,3 @@ class MainController {
         audio.init($scope.state, $scope.globalSetting.values, $scope.instrument.list);
     }
 }
-
-MainController.$inject = ['$scope', '$mdDialog'];
-
-export default MainController;

@@ -1,6 +1,8 @@
 import pixiPianoRoll from 'pixi-piano-roll';
 
 export default function($timeout) {
+    'ngInject';
+
     return {
         restrict: 'E',
         compile: function() {

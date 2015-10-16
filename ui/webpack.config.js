@@ -16,7 +16,7 @@ module.exports = {
         loaders: [
             {
                 test: /\.js$/,
-                loader: 'babel?optional[]=runtime',
+                loaders: ['ng-annotate?add=true', 'babel?optional[]=runtime'],
                 include: libDir
             },
             {

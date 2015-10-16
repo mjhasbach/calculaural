@@ -37,6 +37,7 @@
     "html-loader": "0.3.0",
     "jquery": "2.1.4",
     "json-loader": "0.5.3",
+    "ng-annotate-loader": "0.0.10",
     "node-libs-browser": "0.5.3",
     "node-uuid": "1.4.3",
     "pi": "1.0.0",

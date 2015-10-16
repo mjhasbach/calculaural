@@ -1,5 +1,7 @@
-class SettingsController {
+export default class {
     constructor($scope, $mdDialog, setting, audio) {
+        'ngInject';
+
         Object.assign(
             $scope,
             {
@@ -27,7 +29,3 @@ class SettingsController {
         });
     }
 }
-
-SettingsController.$inject = ['$scope', '$mdDialog', 'setting', 'audio'];
-
-export default SettingsController;
