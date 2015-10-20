@@ -1,6 +1,6 @@
 # Calculaural
 
-Create procedural music: http://hasba.ch/calculaural
+Create procedural music: http://calculaural.hasba.ch
 
 ## Features
 
