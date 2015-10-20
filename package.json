@@ -43,7 +43,6 @@
     "node-uuid": "1.4.3",
     "pi": "1.0.0",
     "pixi-piano-roll": "1.2.2",
-    "release-script": "0.5.3",
     "style-loader": "0.12.4",
     "teoria": "2.1.1",
     "to-capital-case": "0.1.1",
@@ -51,7 +50,6 @@
     "webpack": "1.12.2"
   },
   "scripts": {
-    "release": "release",
     "postinstall": "node ./node_modules/webpack/bin/webpack.js --config ./ui/webpack.config.js -p -c --progress"
   }
 }
